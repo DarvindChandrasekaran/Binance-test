@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import "./App.css";
@@ -52,8 +52,8 @@ function App() {
   }, [ask]);
 
   useEffect(() => {
-    setTimeLabel((prev) => [...prev, time]);
-  }, [time]);
+    setTimeLabel((prev) => [...prev, time_label]);
+  }, [ask]);
 
   useEffect(() => {
     if (loading) {
@@ -114,28 +114,40 @@ function App() {
           <img src={LoaderImg} alt="loading" />
         </div>
       ) : (
-        <TradeViewChart
-          key={pair + interval}
-          interval={interval}
-          pair={pair}
-          className="chart"
-        />
+        <React.Fragment>
+          <TradeViewChart
+            key={pair + interval}
+            interval={interval}
+            pair={pair}
+            className="chart"
+          />
+          <div style={{ width: "800px" }}>
+            <Line
+              key={pair + interval + "line"}
+              options={{
+                responsive: true,
+                scales: {
+                  y: {
+                    min: 38300,
+                    max: 38400,
+                  },
+                },
+              }}
+              data={{
+                labels: time_label,
+                datasets: [
+                  {
+                    data: price_data,
+                    fill: true,
+                    backgroundColor: "rgba(75,192,192,0.2)",
+                    borderColor: "rgba(75,192,192,1)",
+                  },
+                ],
+              }}
+            />
+          </div>
+        </React.Fragment>
       )}
-      <Line
-        key={pair + interval + "line"}
-        data={{
-          labels: time_label,
-          datasets: [
-            {
-              data: price_data,
-              fill: true,
-              backgroundColor: "rgba(75,192,192,0.2)",
-              borderColor: "rgba(75,192,192,1)",
-            },
-          ],
-        }}
-      />
-      ;
     </div>
   );
 }
