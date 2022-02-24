@@ -6,8 +6,10 @@ const useBinanceData = (symbol) => {
   const [open, setOpen] = React.useState(0);
   const [low, setLow] = React.useState(0);
   const [high, setHigh] = React.useState(0);
+  const [close, setClose] = React.useState();
   const [volume, setVolume] = React.useState(0);
-  const [time, setTime] = React.useState(0);
+  const [time, setTime] = React.useState();
+  const [percent, setPercent] = React.useState("");
   const socket = React.useRef(null);
 
   React.useEffect(() => {
@@ -17,21 +19,22 @@ const useBinanceData = (symbol) => {
     socket.current.onmessage = (msg) => {
       const data = JSON.parse(msg.data);
       console.log(data);
-      const { a, b, o, l, h, v, E } = data.data;
+      const { a, b, o, l, h, c, v, E, P } = data.data;
       setAsk(a);
-      console.log(a);
       setBid(b);
       setOpen(o);
       setLow(l);
       setHigh(h);
+      setClose(c);
       setVolume(v);
       setTime(E);
+      setPercent(P);
     };
 
     return () => socket.current.close();
   }, [symbol]);
 
-  return [ask, bid, open, low, high, volume, time];
+  return [ask, bid, open, low, high, close, volume, time, percent];
 };
 
 export default useBinanceData;
