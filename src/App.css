@@ -62,3 +62,14 @@
 .interval-filter > div:hover {
   background-color: rgb(56, 55, 55);
 }
+
+.db-chart {
+  display: flex;
+  flex-direction: row;
+  width: 800px;
+}
+
+.buy-btn {
+  width: 200px;
+  height: 300px;
+}
