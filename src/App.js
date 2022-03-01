@@ -6,8 +6,9 @@ import TradeViewChart from "react-crypto-chart";
 import LoaderImg from "./Loader.svg";
 import DropdownImg from "./down-chevron.png";
 import useBinanceData from "./binance-data";
+import annotationPlugin from "chartjs-plugin-annotation";
 
-Chart.register(...registerables);
+Chart.register(...registerables, annotationPlugin);
 
 const crypto_list = [
   { id: "BTCUSDT", name: "BTC/USDT" },
@@ -33,7 +34,8 @@ const crypto_list = [
 ];
 
 function App() {
-  const [pair, setPair] = useState("BTCUSDT");
+  const [pair, setPair] = useState("BTCUSDT", "");
+
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [interval, setInterval] = useState("1m");
@@ -43,9 +45,43 @@ function App() {
   const [time_label, setTimeLabel] = useState([]);
 
   const getName = (id) => crypto_list.find((c) => c.id === id).name;
+
   const handleInterval = (interval) => {
     setLoading(true);
     setInterval(interval);
+  };
+
+  const options = {
+    plugins: {
+      autocolors: false,
+      annotation: {
+        annotations: {
+          line1: {
+            type: "line",
+            yMin: close,
+            yMax: close,
+            borderColor: "rgb(255, 99, 132)",
+            borderWidth: 2,
+            label: {
+              content: close,
+              enabled: true,
+              position: "right",
+            },
+          },
+        },
+      },
+      responsive: true,
+      scales: {
+        y: {
+          min: () => {
+            Math.min(price_data);
+          },
+          max: () => {
+            Math.max(price_data);
+          },
+        },
+      },
+    },
   };
 
   useEffect(() => {
@@ -73,9 +109,10 @@ function App() {
 
   return (
     <div className="app">
-      Ask:{ask} Bid: {bid} Open: {open} Low: {low} High: {high} Close: {close}{" "}
-      Percent: {percent}
-      Volume: {volume}
+      Ask: {parseFloat(ask).toFixed(2)} Bid: {parseFloat(bid).toFixed(2)} Open:
+      {parseFloat(open).toFixed(2)} Low: {parseFloat(low).toFixed(2)} High:
+      {parseFloat(high).toFixed(2)} Close: {parseFloat(close).toFixed(2)}
+      Volume: {parseFloat(volume).toFixed(2)}
       {/* DROPDOWN */}
       <div>
         <div
@@ -101,7 +138,21 @@ function App() {
                   key={c.id}
                   className="pair-list"
                 >
-                  {c.name}
+                  <tr>
+                    <td className="coinList">{c.name}</td>
+                    <td className="coinList">{parseFloat(close).toFixed(2)}</td>
+                    <td className="coinList">
+                      {parseFloat(percent).toFixed(2) < 0 ? (
+                        <p className="coin-percent red">
+                          {parseFloat(percent).toFixed(2)}%
+                        </p>
+                      ) : (
+                        <p className="coin-percent green">
+                          {parseFloat(percent).toFixed(2)}%
+                        </p>
+                      )}
+                    </td>
+                  </tr>
                 </div>
               );
             }
@@ -158,32 +209,6 @@ function App() {
       <div className="db-chart">
         <Line
           key={pair + interval + pair}
-          options={{
-            annotation: {
-              annotations: [
-                {
-                  type: "line",
-                  mode: "horizontal",
-                  drawTime: "beforeDraw",
-                  scaleID: "x-axis-0",
-                  value: "35000",
-                  borderColor: "rgba(239, 131, 0, 0.8)",
-                  borderWidth: 2,
-                },
-              ],
-            },
-            responsive: true,
-            scales: {
-              y: {
-                min: () => {
-                  Math.min(price_data);
-                },
-                max: () => {
-                  Math.max(price_data);
-                },
-              },
-            },
-          }}
           data={{
             labels: time_label,
             datasets: [
@@ -196,6 +221,7 @@ function App() {
               },
             ],
           }}
+          options={options}
         />
         <button className="buy-btn">BUY</button>
       </div>

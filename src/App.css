@@ -21,11 +21,34 @@
 .dropdown-box {
   margin-top: -5px;
   margin-left: 2px;
-  max-height: 105px;
+  height: 33vh;
   overflow: auto;
   width: 200px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 2px;
+  width: 30%;
+  z-index: 999999;
+  position: absolute;
+}
+
+.red {
+  color: #f00606;
+}
+
+.green {
+  color: #11d811;
+}
+
+tr {
+  width: 100%;
+  display: inline-table;
+  background-color: black;
+  color: aqua;
+}
+.coinList {
+  width: 33%;
+  justify-content: center;
+  text-align: center;
 }
 
 .dropdown-icon {
