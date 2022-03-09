@@ -1,69 +1,88 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
+import { createChart } from "lightweight-charts";
 import { Chart, registerables } from "chart.js";
-import "./App.css";
+// import "./Linechart.css";
 import useBinanceData from "./binance-data";
 import annotationPlugin from "chartjs-plugin-annotation";
-Chart.register(...registerables, annotationPlugin);
+import zoomPlugin from "chartjs-plugin-zoom";
+Chart.register(...registerables, annotationPlugin, zoomPlugin);
 
 function App() {
   const [pair, setPair] = useState("BTCUSDT");
-  const [loading, setLoading] = useState(false);
-  const [interval, setInterval] = useState("1m");
-  const [ask, bid, open, low, high, close, volume, percent, time] =
+  const [ask, bid, open, low, high, close, volume, time, percent, lineChart] =
     useBinanceData(pair);
 
-  const [price_data, setPriceData] = useState([]);
-  const [time_label, setTimeLabel] = useState([]);
-  console.log(close);
+  let time_label = lineChart.map((lineChart) =>
+    new Date(lineChart.time * 1000).toLocaleTimeString()
+  );
+  let price_data = lineChart.map((lineChart) => parseFloat(lineChart.close));
 
-  useEffect(() => {
-    if (close) {
-      setPriceData((prev) => [...prev, close]);
-    }
-  }, [close]);
+  // useEffect(() => {
+  //   if (close) {
+  //     setPriceData((prev) => [...prev, close]);
+  //   }
+  //   console.log(price_data);
+  // }, [close]);
 
-  useEffect(() => {
-    if (time) {
-      const date = new Date(time);
-      const t = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const newdate = `${t} ${month}/${day}`;
-      setTimeLabel((prev) => [...prev, newdate]);
-    }
-  }, [time]);
-
+  // useEffect(() => {
+  //   if (time) {
+  //     const date = new Date(time);
+  //     const t = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  //     const day = date.getDate();
+  //     const month = date.getMonth() + 1;
+  //     const newdate = `${t} ${month}/${day}`;
+  //     setTimeLabel((prev) => [...prev, newdate]);
+  //     console.log(time_label);
+  //   }
+  // }, [time]);
   const options = {
+    scales: {
+      xAxis: {
+        min: time_label[time_label.length - 20],
+      },
+      y: {
+        grace: "80%",
+      },
+    },
     plugins: {
       autocolors: false,
       annotation: {
         annotations: {
           line1: {
             type: "line",
-            yMin: close,
-            yMax: close,
+            yScaleId: "yAxis",
+            yMin: price_data[price_data.length - 1],
+            yMax: price_data[price_data.length - 1],
             borderColor: "rgb(255, 99, 132)",
             borderWidth: 2,
             label: {
-              content: close,
+              content: price_data[price_data.length - 1],
               enabled: true,
-              position: "left",
+              position: "right",
             },
           },
         },
       },
       responsive: true,
-      scales: {
-        y: {
-          min: () => {
-            Math.min(price_data);
+      zoom: {
+        zoom: {
+          wheel: {
+            enabled: true,
           },
-          max: () => {
-            Math.max(price_data);
+          pinch: {
+            enabled: true,
           },
+          mode: "x",
+        },
+        animation: {
+          duration: 0,
         },
       },
+      // pan: {
+      //   enabled: true,
+      //   mode: "x",
+      // },
     },
   };
 
@@ -73,11 +92,12 @@ function App() {
       {/* Line Chart */}
       <div className="db-chart">
         <Line
-          key={pair + interval + pair}
+          // key={pair + interval + pair}
           data={{
             labels: time_label,
             datasets: [
               {
+                label: "Current Value",
                 data: price_data,
                 fill: true,
                 backgroundColor: "rgba(75,192,192,0.1)",

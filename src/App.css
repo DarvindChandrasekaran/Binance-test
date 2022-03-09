@@ -96,3 +96,11 @@ tr {
   width: 200px;
   height: 300px;
 }
+
+.list-table {
+  width: 30vw;
+}
+
+td {
+  width: 32%;
+}

@@ -6,6 +6,8 @@ import LoaderImg from "./Loader.svg";
 import DropdownImg from "./down-chevron.png";
 import useBinanceData from "./binance-data";
 import annotationPlugin from "chartjs-plugin-annotation";
+import Table from "./table.js";
+import Row from "./row";
 
 Chart.register(...registerables, annotationPlugin);
 
@@ -38,7 +40,7 @@ function Candlestickchart() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [interval, setInterval] = useState("1m");
-  const [ask, bid, open, low, high, close, volume, percent] =
+  const [ask, bid, open, low, high, close, volume, time, percent, lineChart] =
     useBinanceData(pair);
 
   const getName = (id) => crypto_list.find((c) => c.id === id).name;
@@ -57,12 +59,13 @@ function Candlestickchart() {
   return (
     //Market chart
     <div className="app">
-      Ask: {parseFloat(ask).toFixed(2)} Bid: {parseFloat(bid).toFixed(2)} Open:
+      {/* Ask: {parseFloat(ask).toFixed(2)} Bid: {parseFloat(bid).toFixed(2)} Open:
       {parseFloat(open).toFixed(2)} Low: {parseFloat(low).toFixed(2)} High:
       {parseFloat(high).toFixed(2)} Close: {parseFloat(close).toFixed(2)}
       Percent: {parseFloat(percent).toFixed(2)} Volume:
       {parseFloat(volume).toFixed(2)}
-      {/* DROPDOWN */}
+      */}
+
       <div>
         <div
           onClick={() => {
@@ -79,6 +82,11 @@ function Candlestickchart() {
         <div className="dropdown-box ">
           {crypto_list.map((c) => {
             if (showDropdown) {
+              return <Row key={c.id} pair={c.id} name={c.name} />;
+            }
+          })}
+          {/* {crypto_list.map((c) => {
+            if (showDropdown) {
               return (
                 <div
                   onClick={(e) => {
@@ -88,6 +96,7 @@ function Candlestickchart() {
                   key={c.id}
                   className="pair-list"
                 >
+                  
                   <tr>
                     <td className="coinList">{c.name}</td>
                     <td className="coinList">{parseFloat(close).toFixed(2)}</td>
@@ -103,11 +112,14 @@ function Candlestickchart() {
                       )}
                     </td>
                   </tr>
+
+
+
                 </div>
               );
             }
             return <></>;
-          })}
+          })} */}
         </div>
       </div>
       <div className="market-chart-title">{getName(pair)}</div>
