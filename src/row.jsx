@@ -3,8 +3,6 @@ import useBinanceData from "./binance-data";
 const Row = ({ pair, name }) => {
   const [, , , , , close, , , percent] = useBinanceData(pair);
 
-  console.log(close);
-
   return (
     <tr className="list-row">
       <td>{name}</td>
@@ -15,7 +13,7 @@ const Row = ({ pair, name }) => {
             Number.parseFloat(percent) > 0 ? "green" : "red"
           }`}
         >
-          {Number.parseFloat(percent).toFixed(2)}
+          {Number.parseFloat(percent).toFixed(2)}%
         </p>
       </td>
     </tr>

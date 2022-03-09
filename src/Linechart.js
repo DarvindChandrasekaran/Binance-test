@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
-import { createChart } from "lightweight-charts";
 import { Chart, registerables } from "chart.js";
 // import "./Linechart.css";
 import useBinanceData from "./binance-data";
@@ -10,32 +9,13 @@ Chart.register(...registerables, annotationPlugin, zoomPlugin);
 
 function App() {
   const [pair, setPair] = useState("BTCUSDT");
-  const [ask, bid, open, low, high, close, volume, time, percent, lineChart] =
-    useBinanceData(pair);
+  const [, , , , , , , , , lineChart] = useBinanceData(pair);
 
   let time_label = lineChart.map((lineChart) =>
     new Date(lineChart.time * 1000).toLocaleTimeString()
   );
   let price_data = lineChart.map((lineChart) => parseFloat(lineChart.close));
 
-  // useEffect(() => {
-  //   if (close) {
-  //     setPriceData((prev) => [...prev, close]);
-  //   }
-  //   console.log(price_data);
-  // }, [close]);
-
-  // useEffect(() => {
-  //   if (time) {
-  //     const date = new Date(time);
-  //     const t = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-  //     const day = date.getDate();
-  //     const month = date.getMonth() + 1;
-  //     const newdate = `${t} ${month}/${day}`;
-  //     setTimeLabel((prev) => [...prev, newdate]);
-  //     console.log(time_label);
-  //   }
-  // }, [time]);
   const options = {
     scales: {
       xAxis: {
@@ -87,12 +67,9 @@ function App() {
   };
 
   return (
-    //Market chart
     <div className="app">
-      {/* Line Chart */}
       <div className="db-chart">
         <Line
-          // key={pair + interval + pair}
           data={{
             labels: time_label,
             datasets: [
